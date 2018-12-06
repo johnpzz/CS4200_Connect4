@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cs4200_Connect;
+//package cs4200_Connect;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -47,6 +47,7 @@ period of time.
     protected int numOfMoves;
     protected boolean gameIsSolved;
     protected boolean imFirst;
+    //protected List<String> moveList;
 
     public char getCurrentPlayer() {
         return currentPlayer;
@@ -69,6 +70,7 @@ period of time.
     Game() {
         board = new Board();
         gameIsSolved = false;
+        //moveList = new ArrayList<>();
     }
 
     // Initial set-up
@@ -80,6 +82,12 @@ period of time.
         String choice = keyboard.next();
         String firstPlayer = findFirstPlayer(choice);
         System.out.println("The first player is: " + firstPlayer);
+        System.out.println("How much time is there to make a move for the AI?");
+        String time = keyboard.next();
+        while (!time.matches("[0-2][0-5]")) {
+            System.out.println("Enter a proper time: ");
+            time = keyboard.next();
+        }
         currentPlayer = firstPlayer.charAt(0);
         if (currentPlayer == 'X') {
             imFirst = true;
@@ -115,6 +123,7 @@ period of time.
                 String move = keyboard.next();
                 move = checkMove(move);
                 board = board.playerMove(move);
+                //checkForSuccess();
                 player = 'X';
             } else {
                 //System.out.print("Enter a move: ");
@@ -123,10 +132,8 @@ period of time.
                 } else {
                     System.out.println("AI is moving.. ");
                 }
-                //String move = keyboard.next();
-                //move = checkMove(move);
-                //board = board.aiMove(move);
                 board = board.aiMove();
+                //checkForSuccess();
                 player = 'O';
             }
             
@@ -147,7 +154,105 @@ period of time.
         return move;
     }
     
-  
+   
+    // Currently getting an ArrayIndexOutOfBounds error
+    public boolean checkForSuccess() {
+        for (int i = 0; i < board.getBoard().length; i++) {
+            for (int j = 0; i < board.getBoard().length; j++) {
+                if (board.getBoard()[i][j] != '-') {
+                    boolean d = checkDown(board.getBoard()[i][j], i, j);
+                    boolean u = checkUp(board.getBoard()[i][j], i, j);
+                    boolean l = checkLeft(board.getBoard()[i][j], i, j);
+                    boolean r = checkRight(board.getBoard()[i][j], i, j);
+                    
+                    if (d == true|| u == true|| l == true|| r == true)
+                        return true;
+
+                }
+            }
+        }
+        return false;
+    }
+    
+    public boolean checkDown(char player, int row, int column) {
+        int num = 1;
+        
+        while (row + 1 <= 7) {
+            int newRow = row + 1;
+            
+            if (num >= 4) {
+                return true;
+            }
+            if (board.getBoard()[newRow][column] == player) {
+                num++;
+            } else if (board.getBoard()[newRow][column] != player) {
+                return false;
+            }
+        }
+        
+        return false;
+    }
+    
+    public boolean checkUp(char player, int row, int column) {
+        int num = 1;
+        
+        while (row - 1 >= 0) {
+            int newRow = row - 1;
+            
+            if (num >= 4) {
+                return true;
+            }
+            if (board.getBoard()[newRow][column] == player) {
+                num++;
+            } else if (board.getBoard()[newRow][column] != player) {
+                return false;
+            }
+        }
+        
+        return false;
+    }
+    
+    public boolean checkRight(char player, int row, int column) {
+        int num = 1;
+        
+        while (column + 1 <= 7) {
+            int newColumn = column + 1;
+            
+            if (num >= 4) {
+                return true;
+            }
+            if (board.getBoard()[row][newColumn] == player) {
+                num++;
+            } else if (board.getBoard()[row][newColumn] != player) {
+                return false;
+            }
+        }
+        
+        return false;
+    }
+    
+    public boolean checkLeft(char player, int row, int column) {
+        int num = 1;
+        
+        while (column - 1 >= 0) {
+            int newColumn = column - 1;
+            
+            if (num >= 4) {
+                return true;
+            }
+            if (board.getBoard()[row][newColumn] == player) {
+                num++;
+            } else if (board.getBoard()[row][newColumn] != player) {
+                return false;
+            }
+        }
+        
+        return false;
+    }
+    
+    
+    
+    
     
     public static void main(String[] args) {
         Game game = new Game();
@@ -160,9 +265,7 @@ period of time.
         
         
         
-        
-        //System.out.println(game.currentPlayer);
-        //b.printBoard();
+        // Ideas for time handling
         //System.out.println((int)System.currentTimeMillis());
         //System.out.println((int)System.currentTimeMillis() + 60*1000);
     }
